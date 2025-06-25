@@ -5,11 +5,13 @@ import ChatSidebar from "./ChatSidebar";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import { useChat } from "@/contexts/ChatContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Message } from "@/contexts/ChatContext";
 import { sendMessageToAI, prepareMessageHistory } from "@/lib/api";
 
 export default function ChatInterface() {
   const { activeChat, addMessage, samMode, samModel } = useChat();
+  const { user } = useAuth();
   const [isTyping, setIsTyping] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -48,6 +50,7 @@ export default function ChatInterface() {
         preparedHistory,
         samMode,
         samModel,
+        user?.id,
       );
 
       const aiResponse: Message = {

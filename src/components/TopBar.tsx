@@ -80,10 +80,6 @@ export default function TopBar() {
               <span>GPT-4o</span>
               {samModel === "gpt-4o" && <Check className="w-4 h-4 ml-auto" />}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setSamModel("gpt-3.5")}>
-              <span>GPT-3.5</span>
-              {samModel === "gpt-3.5" && <Check className="w-4 h-4 ml-auto" />}
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => setSamMode("sam")}>
               <span>Sam Mode</span>

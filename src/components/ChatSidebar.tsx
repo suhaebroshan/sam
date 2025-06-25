@@ -160,11 +160,15 @@ export default function ChatSidebar() {
           </div>
           <div className="flex-1">
             <p className="font-medium text-sm">{user?.name || "User"}</p>
-            <p className="text-xs text-sidebar-foreground/70">AI Creator</p>
+            <p className="text-xs text-sidebar-foreground/70">
+              {user?.isCreator ? "AI Creator" : "User"}
+            </p>
           </div>
-          <Badge variant="outline" className="text-xs">
-            Pro
-          </Badge>
+          {user?.isPro && (
+            <Badge variant="outline" className="text-xs">
+              Pro
+            </Badge>
+          )}
         </div>
 
         {/* Bot Status */}

@@ -10,6 +10,8 @@ interface User {
   id: string;
   name: string;
   email: string;
+  isCreator: boolean;
+  isPro: boolean;
 }
 
 interface AuthContextType {
@@ -41,10 +43,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
+      const isSpecialUser =
+        email === "suhaebroshan445@gmail.com" &&
+        password === "6969_sam.is.real.lmfao";
+
       const user = {
         id: "1",
-        name: email === "suhaeb@example.com" ? "Suhaeb" : "User",
+        name: isSpecialUser ? "Suhaeb" : "User",
         email,
+        isCreator: isSpecialUser,
+        isPro: isSpecialUser,
       };
 
       setUser(user);
@@ -60,10 +68,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
+      const isSpecialUser =
+        email === "suhaebroshan445@gmail.com" &&
+        password === "6969_sam.is.real.lmfao";
+
       const user = {
         id: Date.now().toString(),
-        name,
+        name: isSpecialUser ? "Suhaeb" : name,
         email,
+        isCreator: isSpecialUser,
+        isPro: isSpecialUser,
       };
 
       setUser(user);

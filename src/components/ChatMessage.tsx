@@ -1,6 +1,7 @@
 import { User, Bot, Copy, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useChat } from "@/contexts/ChatContext";
 
 interface ChatMessageProps {
   message: string;
@@ -15,6 +16,9 @@ export default function ChatMessage({
   timestamp,
   isTyping,
 }: ChatMessageProps) {
+  const { samMode } = useChat();
+  const botColor = samMode === "corporate" ? "neon-blue" : "neon-red";
+
   return (
     <div
       className={cn(
@@ -23,8 +27,10 @@ export default function ChatMessage({
       )}
     >
       {!isUser && (
-        <div className="w-8 h-8 bg-neon-red/20 rounded-full flex items-center justify-center shrink-0 border border-neon-red/30">
-          <Bot className="w-4 h-4 text-neon-red" />
+        <div
+          className={`w-8 h-8 bg-${botColor}/20 rounded-full flex items-center justify-center shrink-0 border border-${botColor}/30`}
+        >
+          <Bot className={`w-4 h-4 text-${botColor}`} />
         </div>
       )}
 
@@ -41,20 +47,20 @@ export default function ChatMessage({
             <div className="flex items-center gap-1">
               <div className="flex gap-1">
                 <div
-                  className="w-2 h-2 bg-neon-red rounded-full animate-typing"
+                  className={`w-2 h-2 bg-${botColor} rounded-full animate-typing`}
                   style={{ animationDelay: "0ms" }}
                 ></div>
                 <div
-                  className="w-2 h-2 bg-neon-red rounded-full animate-typing"
+                  className={`w-2 h-2 bg-${botColor} rounded-full animate-typing`}
                   style={{ animationDelay: "200ms" }}
                 ></div>
                 <div
-                  className="w-2 h-2 bg-neon-red rounded-full animate-typing"
+                  className={`w-2 h-2 bg-${botColor} rounded-full animate-typing`}
                   style={{ animationDelay: "400ms" }}
                 ></div>
               </div>
-              <span className="text-xs text-neon-red ml-2">
-                SAM is thinking...
+              <span className={`text-xs text-${botColor} ml-2`}>
+                SAM is {samMode === "corporate" ? "analyzing" : "thinking"}...
               </span>
             </div>
           ) : (

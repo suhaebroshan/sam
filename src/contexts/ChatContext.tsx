@@ -23,7 +23,7 @@ export interface Chat {
 }
 
 export type SamMode = "sam" | "corporate";
-export type SamModel = "gpt-4o" | "gpt-3.5";
+export type SamModel = "gpt-4o";
 
 interface ChatContextType {
   chats: Chat[];

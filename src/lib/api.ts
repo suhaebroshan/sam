@@ -1,4 +1,5 @@
 import { SamMode, SamModel } from "@/contexts/ChatContext";
+import { extractUserFacts, addMemories, getMemoryContext } from "./memory";
 
 interface ChatMessage {
   role: "system" | "user" | "assistant";
@@ -41,13 +42,29 @@ export async function sendMessageToAI(
   messages: { content: string; isUser: boolean }[],
   mode: SamMode = "sam",
   model: SamModel = "gpt-4o",
+  userId?: string,
 ): Promise<string> {
   try {
+    // Extract and save user facts from latest user message
+    if (userId && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.isUser) {
+        const facts = extractUserFacts(lastMessage.content);
+        if (facts.length > 0) {
+          addMemories(userId, facts);
+        }
+      }
+    }
+
+    // Get memory context
+    const memoryContext = userId ? getMemoryContext(userId) : "";
+    const systemPrompt = SYSTEM_PROMPTS[mode] + memoryContext;
+
     // Convert our message format to OpenAI format
     const chatMessages: ChatMessage[] = [
       {
         role: "system",
-        content: SYSTEM_PROMPTS[mode],
+        content: systemPrompt,
       },
       ...messages.map(
         (msg): ChatMessage => ({
@@ -60,7 +77,6 @@ export async function sendMessageToAI(
     // Map our model names to OpenRouter model names
     const modelMap = {
       "gpt-4o": "openai/gpt-4o-2024-05-13",
-      "gpt-3.5": "openai/gpt-3.5-turbo",
     };
 
     const response = await fetch(
