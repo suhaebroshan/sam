@@ -59,7 +59,7 @@ export async function sendMessageToAI(
 
     // Map our model names to OpenRouter model names
     const modelMap = {
-      "gpt-4o": "openai/gpt-4o-2024-08-06",
+      "gpt-4o": "openai/gpt-4o-2024-05-13",
       "gpt-3.5": "openai/gpt-3.5-turbo-0125",
     };
 
