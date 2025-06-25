@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useChat } from "@/contexts/ChatContext";
 import { useAuth } from "@/contexts/AuthContext";
+import MemoriesDialog from "./MemoriesDialog";
 
 export default function ChatSidebar() {
   const {
@@ -198,6 +199,11 @@ export default function ChatSidebar() {
                 : "Corporate filter active"}
             </span>
           </div>
+        </div>
+
+        {/* Memories Section */}
+        <div className="mt-3">
+          <MemoriesDialog />
         </div>
       </div>
     </div>

@@ -135,3 +135,12 @@ export function getMemoryContext(userId: string): string {
 export function clearUserMemories(userId: string): void {
   localStorage.removeItem(`sam_memories_${userId}`);
 }
+
+// Delete a specific memory by index
+export function deleteMemory(userId: string, index: number): void {
+  const existing = getUserMemories(userId);
+  if (!existing || !existing.facts) return;
+
+  const updatedFacts = existing.facts.filter((_, i) => i !== index);
+  saveUserMemories(userId, updatedFacts);
+}
