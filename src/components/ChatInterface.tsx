@@ -9,7 +9,7 @@ import { Message } from "@/contexts/ChatContext";
 import { sendMessageToAI, prepareMessageHistory } from "@/lib/api";
 
 export default function ChatInterface() {
-  const { activeChat, addMessage, samMode } = useChat();
+  const { activeChat, addMessage, samMode, samModel } = useChat();
   const [isTyping, setIsTyping] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
