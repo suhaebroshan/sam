@@ -9,6 +9,37 @@ export function extractUserFacts(message: string): string[] {
   const facts: string[] = [];
   const lowerMessage = message.toLowerCase();
 
+  // EXPLICIT MEMORY COMMANDS - High Priority
+  // Remember that/this patterns
+  const explicitRememberMatches = [
+    /(?:remember that|keep in mind that|don't forget that|note that)\s+(.+)/i,
+    /(?:remember this|keep this in mind|don't forget this|note this):\s*(.+)/i,
+    /(?:remember|keep in mind|don't forget|note):\s*(.+)/i,
+    /(?:sam,?\s*remember|sam,?\s*keep in mind|sam,?\s*don't forget)\s+(.+)/i,
+  ];
+
+  for (const pattern of explicitRememberMatches) {
+    const match = message.match(pattern);
+    if (match && match[1] && match[1].trim().length > 3) {
+      facts.push(`IMPORTANT: ${match[1].trim()}`);
+    }
+  }
+
+  // For later reference patterns
+  const laterReferenceMatches = [
+    /(?:for later|for future reference|for next time):\s*(.+)/i,
+    /(?:save this|store this|bookmark this):\s*(.+)/i,
+  ];
+
+  for (const pattern of laterReferenceMatches) {
+    const match = message.match(pattern);
+    if (match && match[1] && match[1].trim().length > 3) {
+      facts.push(`FOR REFERENCE: ${match[1].trim()}`);
+    }
+  }
+
+  // AUTO-DETECTED FACTS - Lower Priority
+
   // Name mentions
   const nameMatch = message.match(
     /(?:i'm|i am|my name is|call me|i'm called)\s+([a-zA-Z]+)/i,
@@ -73,6 +104,14 @@ export function extractUserFacts(message: string): string[] {
     facts.push(`User can/knows ${skillMatch[1].trim()}`);
   }
 
+  // Goals and aspirations
+  const goalMatch = message.match(
+    /(?:i want to|i plan to|i'm planning to|my goal is to|i aim to)\s+([a-zA-Z\s]+)/i,
+  );
+  if (goalMatch && goalMatch[1].trim().length > 3) {
+    facts.push(`User wants to/plans to ${goalMatch[1].trim()}`);
+  }
+
   return facts;
 }
 
@@ -128,7 +167,34 @@ export function getMemoryContext(userId: string): string {
     return "";
   }
 
-  return `\n\nThings you remember about this user:\n${memories.facts.map((fact) => `- ${fact}`).join("\n")}`;
+  // Separate explicit memories from auto-detected ones
+  const explicitMemories = memories.facts.filter(
+    (fact) =>
+      fact.startsWith("IMPORTANT:") || fact.startsWith("FOR REFERENCE:"),
+  );
+  const autoDetectedMemories = memories.facts.filter(
+    (fact) =>
+      !fact.startsWith("IMPORTANT:") && !fact.startsWith("FOR REFERENCE:"),
+  );
+
+  let context = "\n\nThings you remember about this user:";
+
+  if (explicitMemories.length > 0) {
+    context +=
+      "\n\nEXPLICIT MEMORIES (they specifically asked you to remember these):";
+    explicitMemories.forEach((fact) => {
+      context += `\n- ${fact}`;
+    });
+  }
+
+  if (autoDetectedMemories.length > 0) {
+    context += "\n\nAUTO-DETECTED INFO:";
+    autoDetectedMemories.forEach((fact) => {
+      context += `\n- ${fact}`;
+    });
+  }
+
+  return context;
 }
 
 // Clear all memories for a user
