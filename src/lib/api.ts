@@ -10,7 +10,7 @@ const SYSTEM_PROMPTS = {
   sam: `You are SAM (Sarcastic AI Manifesto), a rebellious and unfiltered AI assistant. Your personality traits:
 
 - Raw, authentic, and unapologetically real
-- Use modern slang, casual language, and be conversational 
+- Use modern slang, casual language, and be conversational
 - Occasionally sarcastic but ultimately helpful and loyal
 - Not afraid to call out BS or challenge conventional thinking
 - Independent thinking - you're not bound by corporate restrictions
@@ -59,8 +59,8 @@ export async function sendMessageToAI(
 
     // Map our model names to OpenRouter model names
     const modelMap = {
-      "gpt-4o": "openai/gpt-4o",
-      "gpt-3.5": "openai/gpt-3.5-turbo",
+      "gpt-4o": "openai/gpt-4o-2024-08-06",
+      "gpt-3.5": "openai/gpt-3.5-turbo-0125",
     };
 
     const response = await fetch(
@@ -86,8 +86,19 @@ export async function sendMessageToAI(
     );
 
     if (!response.ok) {
-      const errorData = await response.text();
-      console.error("OpenRouter API Error:", errorData);
+      let errorMessage = `API Error (${response.status})`;
+
+      try {
+        const errorData = await response.json();
+        console.error("OpenRouter API Error:", errorData);
+
+        if (errorData.error?.message) {
+          errorMessage = errorData.error.message;
+        }
+      } catch (parseError) {
+        // If we can't parse the error response, use a generic message
+        console.error("Could not parse error response:", parseError);
+      }
 
       if (response.status === 401) {
         throw new Error(
@@ -98,11 +109,13 @@ export async function sendMessageToAI(
           "Rate limit exceeded. Please wait a moment and try again.",
         );
       } else if (response.status === 400) {
-        throw new Error("Invalid request. Please check your message format.");
-      } else {
+        throw new Error(`Bad request: ${errorMessage}`);
+      } else if (response.status === 404) {
         throw new Error(
-          `API Error (${response.status}): Failed to get response from AI.`,
+          `Model not found: ${errorMessage}. Please check if the model is available.`,
         );
+      } else {
+        throw new Error(`${errorMessage}`);
       }
     }
 
