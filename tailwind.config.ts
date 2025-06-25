@@ -24,6 +24,17 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        neon: {
+          blue: "hsl(var(--neon-blue))",
+          red: "hsl(var(--neon-red))",
+          green: "hsl(var(--neon-green))",
+          cyan: "hsl(var(--neon-cyan))",
+        },
+        chat: {
+          user: "hsl(var(--chat-user))",
+          bot: "hsl(var(--chat-bot))",
+          background: "hsl(var(--chat-background))",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -85,10 +96,29 @@ export default {
             height: "0",
           },
         },
+        glitch: {
+          "0%, 100%": { transform: "translate(0)" },
+          "10%": { transform: "translate(-2px, -1px)" },
+          "20%": { transform: "translate(2px, 1px)" },
+          "30%": { transform: "translate(-1px, 2px)" },
+          "40%": { transform: "translate(1px, -1px)" },
+          "50%": { transform: "translate(-1px, 1px)" },
+        },
+        typing: {
+          "0%, 60%": { opacity: "0" },
+          "30%": { opacity: "1" },
+        },
+        pulse: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.3" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        glitch: "glitch 0.3s ease-in-out infinite",
+        typing: "typing 1.4s ease-in-out infinite",
+        "pulse-slow": "pulse 2s ease-in-out infinite",
       },
     },
   },
