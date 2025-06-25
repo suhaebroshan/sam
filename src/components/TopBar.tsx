@@ -49,10 +49,20 @@ export default function TopBar() {
         >
           <div
             className={`w-2 h-2 rounded-full animate-pulse-slow ${
-              samMode === "sam" ? "bg-neon-red" : "bg-neon-blue"
+              import.meta.env.VITE_OPENROUTER_API_KEY
+                ? samMode === "sam"
+                  ? "bg-neon-red"
+                  : "bg-neon-blue"
+                : "bg-yellow-500"
             }`}
           ></div>
-          <span>{samMode === "sam" ? "No Filter" : "Filtered"}</span>
+          <span>
+            {import.meta.env.VITE_OPENROUTER_API_KEY
+              ? samMode === "sam"
+                ? "No Filter"
+                : "Filtered"
+              : "API Missing"}
+          </span>
         </div>
 
         <DropdownMenu>

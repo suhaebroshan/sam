@@ -6,6 +6,7 @@ import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import { useChat } from "@/contexts/ChatContext";
 import { Message } from "@/contexts/ChatContext";
+import { sendMessageToAI, prepareMessageHistory } from "@/lib/api";
 
 export default function ChatInterface() {
   const { activeChat, addMessage, samMode } = useChat();
@@ -37,31 +38,21 @@ export default function ChatInterface() {
     addMessage(activeChat.id, newMessage);
     setIsTyping(true);
 
-    // Simulate AI response delay
-    setTimeout(() => {
-      const samResponses = [
-        "Yo, that's actually fire! Let me break that down for you...",
-        "Bruh, real talk - that's some deep shit you're asking about.",
-        "Aight, listen up. Here's the deal...",
-        "Damn, you really went there. Respect. Let me hit you with some truth...",
-        "Okay okay, I see you. That's actually a solid question.",
-        "Nah fam, that ain't it. Let me explain why...",
-        "Yooo, this is getting spicy! Here's my take...",
-      ];
+    try {
+      // Prepare message history for API
+      const messageHistory = [...activeChat.messages, newMessage];
+      const preparedHistory = prepareMessageHistory(messageHistory);
 
-      const corporateResponses = [
-        "Thank you for your question. Let me provide you with a comprehensive response.",
-        "I appreciate your inquiry. Here's a professional analysis of the topic.",
-        "That's an excellent question. Allow me to explain this thoroughly.",
-        "I understand your concern. Let me address this in a structured manner.",
-        "Thank you for bringing this up. Here's my professional perspective.",
-      ];
-
-      const responses = samMode === "sam" ? samResponses : corporateResponses;
+      // Get AI response
+      const aiContent = await sendMessageToAI(
+        preparedHistory,
+        samMode,
+        samModel,
+      );
 
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        content: responses[Math.floor(Math.random() * responses.length)],
+        content: aiContent,
         isUser: false,
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
@@ -70,8 +61,24 @@ export default function ChatInterface() {
       };
 
       addMessage(activeChat.id, aiResponse);
+    } catch (error) {
+      console.error("Error getting AI response:", error);
+
+      // Show error message to user
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: `❌ **Error**: ${error instanceof Error ? error.message : "Failed to connect to SAM. Please try again."}\n\n*Check your API key and internet connection.*`,
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+
+      addMessage(activeChat.id, errorMessage);
+    } finally {
       setIsTyping(false);
-    }, 2000);
+    }
   };
 
   return (

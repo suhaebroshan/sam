@@ -171,8 +171,23 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       prev.map((chat) => {
         if (chat.id === chatId) {
           const updatedMessages = [...chat.messages, message];
+
+          // Auto-generate chat title from first user message
+          let chatTitle = chat.title;
+          if (
+            chat.title === "New Chat" &&
+            message.isUser &&
+            updatedMessages.length === 1
+          ) {
+            // Generate title from first 4-5 words of the message
+            const words = message.content.split(" ");
+            chatTitle = words.slice(0, Math.min(5, words.length)).join(" ");
+            if (words.length > 5) chatTitle += "...";
+          }
+
           return {
             ...chat,
+            title: chatTitle,
             messages: updatedMessages,
             lastMessage: message.content,
             timestamp: message.isUser ? "Now" : "Now",
@@ -183,16 +198,31 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     );
 
     if (activeChat?.id === chatId) {
-      setActiveChat((prev) =>
-        prev
-          ? {
-              ...prev,
-              messages: [...prev.messages, message],
-              lastMessage: message.content,
-              timestamp: message.isUser ? "Now" : "Now",
-            }
-          : null,
-      );
+      setActiveChat((prev) => {
+        if (!prev) return null;
+
+        const updatedMessages = [...prev.messages, message];
+        let chatTitle = prev.title;
+
+        // Auto-generate chat title from first user message
+        if (
+          prev.title === "New Chat" &&
+          message.isUser &&
+          updatedMessages.length === 1
+        ) {
+          const words = message.content.split(" ");
+          chatTitle = words.slice(0, Math.min(5, words.length)).join(" ");
+          if (words.length > 5) chatTitle += "...";
+        }
+
+        return {
+          ...prev,
+          title: chatTitle,
+          messages: updatedMessages,
+          lastMessage: message.content,
+          timestamp: message.isUser ? "Now" : "Now",
+        };
+      });
     }
   };
 
