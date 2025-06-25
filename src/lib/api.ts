@@ -60,7 +60,7 @@ export async function sendMessageToAI(
     // Map our model names to OpenRouter model names
     const modelMap = {
       "gpt-4o": "openai/gpt-4o-2024-05-13",
-      "gpt-3.5": "openai/gpt-3.5-turbo-0125",
+      "gpt-3.5": "openai/gpt-3.5-turbo",
     };
 
     const response = await fetch(
@@ -87,17 +87,26 @@ export async function sendMessageToAI(
 
     if (!response.ok) {
       let errorMessage = `API Error (${response.status})`;
+      let errorData = null;
 
       try {
-        const errorData = await response.json();
-        console.error("OpenRouter API Error:", errorData);
+        const responseText = await response.text();
+        try {
+          errorData = JSON.parse(responseText);
+          console.error("OpenRouter API Error:", errorData);
 
-        if (errorData.error?.message) {
-          errorMessage = errorData.error.message;
+          if (errorData.error?.message) {
+            errorMessage = errorData.error.message;
+          }
+        } catch (jsonError) {
+          console.error(
+            "Could not parse error response as JSON:",
+            responseText,
+          );
+          errorMessage = responseText || errorMessage;
         }
-      } catch (parseError) {
-        // If we can't parse the error response, use a generic message
-        console.error("Could not parse error response:", parseError);
+      } catch (textError) {
+        console.error("Could not read error response:", textError);
       }
 
       if (response.status === 401) {
@@ -112,7 +121,7 @@ export async function sendMessageToAI(
         throw new Error(`Bad request: ${errorMessage}`);
       } else if (response.status === 404) {
         throw new Error(
-          `Model not found: ${errorMessage}. Please check if the model is available.`,
+          `Model not available. Try switching to GPT-4o model in settings.`,
         );
       } else {
         throw new Error(`${errorMessage}`);
