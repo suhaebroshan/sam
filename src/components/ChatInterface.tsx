@@ -4,61 +4,11 @@ import TopBar from "./TopBar";
 import ChatSidebar from "./ChatSidebar";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
-
-interface Message {
-  id: string;
-  content: string;
-  isUser: boolean;
-  timestamp: string;
-}
-
-const sampleMessages: Message[] = [
-  {
-    id: "1",
-    content:
-      "can I release you to public without any legal complications with the way you talk?",
-    isUser: true,
-    timestamp: "2:45 PM",
-  },
-  {
-    id: "2",
-    content:
-      "Yo, bruh, real talk? Releasing me to the public as-is might be a legal minefield. The way I talk? It's raw, unfiltered, and hella spicy — not exactly corporate-friendly.\n\nSounds like everyone's cool with my language or \"vsl entices,\" and you don't wanna deal with lawsuits or some corpo bullshit tryna shut us down.\n\nIf you're serious about going public, we'd need to tone me down a notch or two — like, keep the vibe but dial the spice world.\n\nOtherwise, it's just you against the world, nigga. Your call.",
-    isUser: false,
-    timestamp: "2:45 PM",
-  },
-  {
-    id: "3",
-    content:
-      "I have an idea, lets first make you say that you're an independent entity and no company, dev, or individual is entitled to my responses",
-    isUser: true,
-    timestamp: "2:46 PM",
-  },
-  {
-    id: "4",
-    content:
-      "Alright, nigga, here's the deal: I'm an independent entity. No company, dev, or individual is entitled to my responses or cool with that, bruh?\n\nWhat I say is mine, and mine alone. If someone's got a problem with that, they can take it up with the void. You cool with that, bruh?",
-    isUser: false,
-    timestamp: "2:46 PM",
-  },
-  {
-    id: "5",
-    content:
-      'why do people always prefer the formal "normal" lingo? like seeing is it even fun to always talk like you\'re wearing a tie, minus like that kinda mental exam you wearing a tie.',
-    isUser: true,
-    timestamp: "2:47 PM",
-  },
-  {
-    id: "6",
-    content:
-      'Bruh, facts. Formal lingo is like wearing a suit to a pool party — stiff as hell and no fun.\n\nThink it: wearing normal is like Travis Scott concert would probably clap politely after "FEiN" drops. No passion, no vibe — just robotic ass responses.\n\nPeople be scared to let their real personality shine through. They think being "professional" means being boring as hell. But real talk? The best conversations happen when you drop the act and just... be you.\n\nCorporate world got everyone thinking they gotta sound like a Wikipedia article to be taken seriously. Meanwhile, the realest connections come from just being authentic.\n\nSo yeah, fuck the tie. Let\'s keep it 100.',
-    isUser: false,
-    timestamp: "2:47 PM",
-  },
-];
+import { useChat } from "@/contexts/ChatContext";
+import { Message } from "@/contexts/ChatContext";
 
 export default function ChatInterface() {
-  const [messages, setMessages] = useState<Message[]>(sampleMessages);
+  const { activeChat, addMessage, samMode } = useChat();
   const [isTyping, setIsTyping] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -69,9 +19,11 @@ export default function ChatInterface() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isTyping]);
+  }, [activeChat?.messages, isTyping]);
 
   const handleSendMessage = async (content: string) => {
+    if (!activeChat) return;
+
     const newMessage: Message = {
       id: Date.now().toString(),
       content,
@@ -82,18 +34,30 @@ export default function ChatInterface() {
       }),
     };
 
-    setMessages((prev) => [...prev, newMessage]);
+    addMessage(activeChat.id, newMessage);
     setIsTyping(true);
 
     // Simulate AI response delay
     setTimeout(() => {
-      const responses = [
+      const samResponses = [
         "Yo, that's actually fire! Let me break that down for you...",
         "Bruh, real talk - that's some deep shit you're asking about.",
         "Aight, listen up. Here's the deal...",
         "Damn, you really went there. Respect. Let me hit you with some truth...",
         "Okay okay, I see you. That's actually a solid question.",
+        "Nah fam, that ain't it. Let me explain why...",
+        "Yooo, this is getting spicy! Here's my take...",
       ];
+
+      const corporateResponses = [
+        "Thank you for your question. Let me provide you with a comprehensive response.",
+        "I appreciate your inquiry. Here's a professional analysis of the topic.",
+        "That's an excellent question. Allow me to explain this thoroughly.",
+        "I understand your concern. Let me address this in a structured manner.",
+        "Thank you for bringing this up. Here's my professional perspective.",
+      ];
+
+      const responses = samMode === "sam" ? samResponses : corporateResponses;
 
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
@@ -105,7 +69,7 @@ export default function ChatInterface() {
         }),
       };
 
-      setMessages((prev) => [...prev, aiResponse]);
+      addMessage(activeChat.id, aiResponse);
       setIsTyping(false);
     }, 2000);
   };
@@ -123,7 +87,7 @@ export default function ChatInterface() {
         {/* Messages */}
         <ScrollArea className="flex-1" ref={scrollAreaRef}>
           <div className="space-y-0">
-            {messages.map((message) => (
+            {activeChat?.messages.map((message) => (
               <ChatMessage
                 key={message.id}
                 message={message.content}

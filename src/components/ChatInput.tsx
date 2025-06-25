@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Send, Mic, Paperclip } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useChat } from "@/contexts/ChatContext";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -10,6 +11,7 @@ interface ChatInputProps {
 
 export default function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
   const [message, setMessage] = useState("");
+  const { samMode, samModel } = useChat();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +45,11 @@ export default function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type your message..."
+            placeholder={
+              samMode === "sam"
+                ? "Yo, what's on your mind?"
+                : "Type your message..."
+            }
             className="min-h-[44px] max-h-32 resize-none bg-background/50 border-border/50 focus:border-neon-blue/50 focus:ring-neon-blue/20 pr-12"
             disabled={disabled}
           />
@@ -72,10 +78,17 @@ export default function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
 
       <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
         <div className="flex items-center gap-4">
-          <span>SAM.exe v2.0 • No filter mode</span>
+          <span>
+            SAM.exe v2.0 • {samModel.toUpperCase()} •{" "}
+            {samMode === "sam" ? "No filter mode" : "Corporate mode"}
+          </span>
           <div className="flex items-center gap-1">
-            <div className="w-1.5 h-1.5 bg-neon-red rounded-full animate-pulse-slow"></div>
-            <span>Unfiltered</span>
+            <div
+              className={`w-1.5 h-1.5 rounded-full animate-pulse-slow ${
+                samMode === "sam" ? "bg-neon-red" : "bg-neon-blue"
+              }`}
+            ></div>
+            <span>{samMode === "sam" ? "Unfiltered" : "Filtered"}</span>
           </div>
         </div>
 
