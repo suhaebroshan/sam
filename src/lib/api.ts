@@ -104,10 +104,17 @@ export async function sendMessageToAI(
       ),
     ];
 
-    // Map our model names to OpenRouter model names
+    // Map our model names to OpenRouter model names with fallback options
     const modelMap = {
-      "gpt-4o": "google/gemini-2.0-flash-exp:free",
+      "gpt-4o": "openai/gpt-4o-2024-05-13", // Primary model
     };
+
+    // Fallback models in case primary is unavailable
+    const fallbackModels = [
+      "openai/gpt-4o-mini",
+      "openai/gpt-3.5-turbo",
+      "google/gemini-2.0-flash-exp:free",
+    ];
 
     const response = await fetch(
       "https://openrouter.ai/api/v1/chat/completions",
@@ -133,23 +140,29 @@ export async function sendMessageToAI(
 
     if (!response.ok) {
       let errorMessage = `API Error (${response.status})`;
-      let errorData = null;
 
       try {
-        const responseText = await response.text();
-        try {
-          errorData = JSON.parse(responseText);
-          console.error("OpenRouter API Error:", errorData);
+        // Clone the response to avoid stream consumption issues
+        const responseClone = response.clone();
+        const responseText = await responseClone.text();
 
-          if (errorData.error?.message) {
-            errorMessage = errorData.error.message;
+        if (responseText) {
+          try {
+            const errorData = JSON.parse(responseText);
+            console.error("OpenRouter API Error:", errorData);
+
+            if (errorData.error?.message) {
+              errorMessage = errorData.error.message;
+            } else if (errorData.error?.metadata?.raw) {
+              errorMessage = errorData.error.metadata.raw;
+            }
+          } catch (jsonError) {
+            console.error(
+              "Could not parse error response as JSON:",
+              responseText,
+            );
+            errorMessage = responseText.slice(0, 200) || errorMessage; // Limit error message length
           }
-        } catch (jsonError) {
-          console.error(
-            "Could not parse error response as JSON:",
-            responseText,
-          );
-          errorMessage = responseText || errorMessage;
         }
       } catch (textError) {
         console.error("Could not read error response:", textError);
@@ -160,14 +173,20 @@ export async function sendMessageToAI(
           "Invalid API key. Please check your OpenRouter API key.",
         );
       } else if (response.status === 429) {
-        throw new Error(
-          "Rate limit exceeded. Please wait a moment and try again.",
-        );
+        if (errorMessage.includes("rate-limited upstream")) {
+          throw new Error(
+            "The AI model is temporarily busy. Please try again in a few moments.",
+          );
+        } else {
+          throw new Error(
+            "Rate limit exceeded. Please wait a moment and try again.",
+          );
+        }
       } else if (response.status === 400) {
         throw new Error(`Bad request: ${errorMessage}`);
       } else if (response.status === 404) {
         throw new Error(
-          `Model not available. Try switching to GPT-4o model in settings.`,
+          `Model not available. Please check if the model is working.`,
         );
       } else {
         throw new Error(`${errorMessage}`);
