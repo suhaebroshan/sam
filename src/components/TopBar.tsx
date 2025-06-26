@@ -36,7 +36,7 @@ export default function TopBar() {
           <p className="text-xs text-muted-foreground -mt-1">
             {samMode === "sam"
               ? "Unfiltered AI Energy"
-              : "Corporate Mode Active"}
+              : "Professional AI Assistant"}
           </p>
         </div>
       </div>

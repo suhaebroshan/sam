@@ -1,10 +1,21 @@
-import React, {
+import {
   createContext,
   useContext,
   useState,
   useEffect,
   ReactNode,
 } from "react";
+import { useAuth } from "./AuthContext";
+import {
+  getUserChats,
+  saveUserChats,
+  getUserMode,
+  saveUserMode,
+  getUserModel,
+  saveUserModel,
+  initializeUserData,
+  migrateGlobalDataToUser,
+} from "@/lib/userStorage";
 
 export interface Message {
   id: string;
@@ -60,43 +71,50 @@ const initialMessages: Message[] = [
 ];
 
 export function ChatProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [chats, setChats] = useState<Chat[]>([]);
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
-  const [samMode, setSamModeState] = useState<SamMode>("sam");
+  const [samMode, setSamModeState] = useState<SamMode>("corporate");
   const [samModel, setSamModelState] = useState<SamModel>("gpt-4o");
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // Initialize user data when user context becomes available
   useEffect(() => {
-    // Load saved chats
-    const savedChats = localStorage.getItem("sam_chats");
-    const savedMode = localStorage.getItem("sam_mode") as SamMode;
-    const savedModel = localStorage.getItem("sam_model") as SamModel;
+    if (user?.id && !isInitialized) {
+      // Migrate old global data for existing users
+      migrateGlobalDataToUser(user.id);
 
-    if (savedChats) {
-      const parsedChats = JSON.parse(savedChats);
-      setChats(parsedChats);
-      const active = parsedChats.find((chat: Chat) => chat.isActive);
-      if (active) setActiveChat(active);
-    } else {
-      // Create initial chat
-      const initialChat: Chat = {
-        id: "1",
-        title: "New Chat",
-        messages: initialMessages,
-        lastMessage: initialMessages[initialMessages.length - 1].content,
-        timestamp: "Today",
-        isActive: true,
-      };
-      setChats([initialChat]);
-      setActiveChat(initialChat);
+      // Initialize or load user-specific data
+      const userData = initializeUserData(user.id);
+
+      setChats(userData.chats);
+      setSamModeState(userData.mode);
+      setSamModelState(userData.model);
+
+      // Set active chat
+      const activeChat =
+        userData.chats.find((chat) => chat.isActive) || userData.chats[0];
+      if (activeChat) {
+        setActiveChat(activeChat);
+      }
+
+      setIsInitialized(true);
+    } else if (!user?.id && isInitialized) {
+      // User logged out, reset state
+      setChats([]);
+      setActiveChat(null);
+      setSamModeState("corporate");
+      setSamModelState("gpt-4o");
+      setIsInitialized(false);
     }
+  }, [user?.id, isInitialized]);
 
-    if (savedMode) setSamModeState(savedMode);
-    if (savedModel) setSamModelState(savedModel);
-  }, []);
-
+  // Save chats whenever they change (but only if user is initialized)
   useEffect(() => {
-    localStorage.setItem("sam_chats", JSON.stringify(chats));
-  }, [chats]);
+    if (user?.id && isInitialized && chats.length > 0) {
+      saveUserChats(user.id, chats);
+    }
+  }, [chats, user?.id, isInitialized]);
 
   const createNewChat = () => {
     const newChat: Chat = {
@@ -228,12 +246,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const setSamMode = (mode: SamMode) => {
     setSamModeState(mode);
-    localStorage.setItem("sam_mode", mode);
+    if (user?.id) {
+      saveUserMode(user.id, mode);
+    }
   };
 
   const setSamModel = (model: SamModel) => {
     setSamModelState(model);
-    localStorage.setItem("sam_model", model);
+    if (user?.id) {
+      saveUserModel(user.id, model);
+    }
   };
 
   const clearAllChats = () => {

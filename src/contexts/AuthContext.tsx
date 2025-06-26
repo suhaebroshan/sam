@@ -90,7 +90,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("sam_user");
-    localStorage.removeItem("sam_chats");
+    // Note: We don't clear user-specific data on logout, so users can return to their data
+    // If you want to clear data on logout, uncomment the line below:
+    // if (user?.id) clearUserData(user.id);
   };
 
   return (
