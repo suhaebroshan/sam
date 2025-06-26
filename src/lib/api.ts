@@ -106,7 +106,7 @@ export async function sendMessageToAI(
 
     // Map our model names to OpenRouter model names
     const modelMap = {
-      "gpt-4o": "openai/gpt-4o-2024-05-13",
+      "gpt-4o": "google/gemini-2.0-flash-exp:free",
     };
 
     const response = await fetch(
