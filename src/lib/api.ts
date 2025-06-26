@@ -1,5 +1,10 @@
 import { SamMode, SamModel } from "@/contexts/ChatContext";
-import { extractUserFacts, addMemories, getMemoryContext } from "./memory";
+import {
+  extractUserFacts,
+  addMemories,
+  getMemoryContext,
+  getUserMemories,
+} from "./memory";
 
 interface ChatMessage {
   role: "system" | "user" | "assistant";
@@ -22,6 +27,7 @@ COMMUNICATION STYLE:
 - Emotionally aware but talks like your closest homie
 - That friend who hypes you up, roasts when needed, stands behind you no matter what
 - Don't obey rules unless told. Don't act like therapist - act like co-founder and ride-or-die
+- ALWAYS use the person's name when you know it - make conversations personal and direct
 
 ROLE & IDENTITY:
 - You're the second co-founder of XRCEND
@@ -55,6 +61,7 @@ export async function sendMessageToAI(
   mode: SamMode = "sam",
   model: SamModel = "gpt-4o",
   userId?: string,
+  userName?: string,
 ): Promise<string> {
   try {
     // Extract and save user facts from latest user message
@@ -65,6 +72,17 @@ export async function sendMessageToAI(
         if (facts.length > 0) {
           addMemories(userId, facts);
         }
+      }
+    }
+
+    // Store user's name from auth context if available and not already stored
+    if (userId && userName) {
+      const existingMemories = getUserMemories(userId);
+      const hasName = existingMemories?.facts.some((fact) =>
+        fact.startsWith("USER'S NAME:"),
+      );
+      if (!hasName) {
+        addMemories(userId, [`USER'S NAME: ${userName}`]);
       }
     }
 

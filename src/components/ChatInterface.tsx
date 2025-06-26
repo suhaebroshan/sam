@@ -51,6 +51,7 @@ export default function ChatInterface() {
         samMode,
         samModel,
         user?.id,
+        user?.name,
       );
 
       const aiResponse: Message = {

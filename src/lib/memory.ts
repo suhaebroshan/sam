@@ -40,12 +40,20 @@ export function extractUserFacts(message: string): string[] {
 
   // AUTO-DETECTED FACTS - Lower Priority
 
-  // Name mentions
-  const nameMatch = message.match(
+  // Name mentions (Enhanced patterns)
+  const namePatterns = [
     /(?:i'm|i am|my name is|call me|i'm called)\s+([a-zA-Z]+)/i,
-  );
-  if (nameMatch) {
-    facts.push(`User's name is ${nameMatch[1]}`);
+    /(?:this is|hey i'm|hi i'm|hello i'm)\s+([a-zA-Z]+)/i,
+    /(?:my name's|name's)\s+([a-zA-Z]+)/i,
+    /(?:everyone calls me|people call me|just call me)\s+([a-zA-Z]+)/i,
+  ];
+
+  for (const pattern of namePatterns) {
+    const nameMatch = message.match(pattern);
+    if (nameMatch && nameMatch[1] && nameMatch[1].length > 1) {
+      facts.push(`USER'S NAME: ${nameMatch[1]}`);
+      break; // Only take the first name match to avoid duplicates
+    }
   }
 
   // Age mentions
@@ -167,17 +175,28 @@ export function getMemoryContext(userId: string): string {
     return "";
   }
 
-  // Separate explicit memories from auto-detected ones
+  // Separate different types of memories
+  const userName = memories.facts.find((fact) =>
+    fact.startsWith("USER'S NAME:"),
+  );
   const explicitMemories = memories.facts.filter(
     (fact) =>
       fact.startsWith("IMPORTANT:") || fact.startsWith("FOR REFERENCE:"),
   );
   const autoDetectedMemories = memories.facts.filter(
     (fact) =>
-      !fact.startsWith("IMPORTANT:") && !fact.startsWith("FOR REFERENCE:"),
+      !fact.startsWith("IMPORTANT:") &&
+      !fact.startsWith("FOR REFERENCE:") &&
+      !fact.startsWith("USER'S NAME:"),
   );
 
   let context = "\n\nThings you remember about this user:";
+
+  // Prioritize user's name at the top
+  if (userName) {
+    const name = userName.replace("USER'S NAME: ", "");
+    context += `\n\nUSER'S NAME: ${name} (use this name when talking to them)`;
+  }
 
   if (explicitMemories.length > 0) {
     context +=
