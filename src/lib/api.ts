@@ -106,14 +106,14 @@ export async function sendMessageToAI(
 
     // Map our model names to OpenRouter model names with fallback options
     const modelMap = {
-      "gpt-4o": "cohere/command-r-plus", // Primary model
+      "gpt-4o": "minimax/minimax-m1:extended", // Primary model
     };
 
     // Fallback models in case primary is unavailable
     const fallbackModels = [
+      "cohere/command-r-plus",
       "openai/gpt-4o-2024-05-13",
       "openai/gpt-4o-mini",
-      "openai/gpt-3.5-turbo",
     ];
 
     const response = await fetch(
