@@ -311,6 +311,15 @@ export function ChatGPTSidebar({ onToggleSidebar }: ChatGPTSidebarProps) {
         open={showSettings}
         onOpenChange={setShowSettings}
       />
+
+      <CustomGPTManager
+        open={showGPTManager}
+        onOpenChange={setShowGPTManager}
+        customGPTs={customGPTs}
+        onSaveGPT={saveCustomGPT}
+        onDeleteGPT={deleteCustomGPT}
+        maxGPTs={10}
+      />
     </div>
   );
 }
