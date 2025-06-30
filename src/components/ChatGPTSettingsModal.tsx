@@ -133,7 +133,7 @@ export function ChatGPTSettingsModal({
         </DialogHeader>
 
         <Tabs defaultValue="memory" className="flex-1">
-          <TabsList className="grid w-full grid-cols-3 bg-gray-700">
+          <TabsList className="grid w-full grid-cols-4 bg-gray-700">
             <TabsTrigger
               value="memory"
               className="data-[state=active]:bg-gray-600"
@@ -147,6 +147,13 @@ export function ChatGPTSettingsModal({
             >
               <Bot className="w-4 h-4 mr-2" />
               Personalities
+            </TabsTrigger>
+            <TabsTrigger
+              value="proactive"
+              className="data-[state=active]:bg-gray-600"
+            >
+              <Bell className="w-4 h-4 mr-2" />
+              Proactive
             </TabsTrigger>
             <TabsTrigger
               value="general"
