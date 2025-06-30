@@ -84,7 +84,7 @@ export function ChatGPTMainArea({
     }
   };
 
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaValue>) => {
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
 
     // Auto-resize textarea
