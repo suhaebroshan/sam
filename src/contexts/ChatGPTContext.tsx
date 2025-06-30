@@ -115,7 +115,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const loadUserData = () => {
     if (!user) return;
 
-    const userDir = `chatgpt_user_${user.id}`;
+    const userDir = `sam_user_${user.id}`;
 
     // Load chats
     const savedChats = JSON.parse(
@@ -144,7 +144,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const saveUserData = () => {
     if (!user) return;
 
-    const userDir = `chatgpt_user_${user.id}`;
+    const userDir = `sam_user_${user.id}`;
     localStorage.setItem(`${userDir}_chats`, JSON.stringify(chats));
     localStorage.setItem(`${userDir}_personality`, currentPersonality);
     localStorage.setItem(
@@ -342,7 +342,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             Authorization: `Bearer ${OPENROUTER_API_KEY}`,
             "Content-Type": "application/json",
             "HTTP-Referer": window.location.origin,
-            "X-Title": "ChatGPT Clone",
+            "X-Title": "SAM.exe",
           },
           body: JSON.stringify({
             model: OPENROUTER_MODEL,

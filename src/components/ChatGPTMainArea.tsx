@@ -95,7 +95,7 @@ export function ChatGPTMainArea({
           )}
           <div className="flex flex-col">
             <h1 className="text-lg font-semibold text-white">
-              {activeChat?.title || "ChatGPT"}
+              {activeChat?.title || "SAM.exe"}
             </h1>
             <div className="flex items-center gap-2">
               <PersonalitySelector
@@ -187,7 +187,7 @@ export function ChatGPTMainArea({
                   currentPersonality === "sam"
                     ? "Yo, what's on your mind?"
                     : currentPersonality === "corporate"
-                      ? "Message ChatGPT..."
+                      ? "Message SAM..."
                       : "Start typing your message..."
                 }
                 className="min-h-[44px] max-h-[200px] resize-none border-0 bg-transparent text-white placeholder-gray-400 focus:ring-0 pr-12"
@@ -207,7 +207,7 @@ export function ChatGPTMainArea({
             {/* Footer */}
             <div className="flex items-center justify-center mt-3 text-xs text-gray-400">
               <span>
-                ChatGPT can make mistakes. Consider checking important
+                SAM.exe can make mistakes. Consider checking important
                 information.
               </span>
             </div>

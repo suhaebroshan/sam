@@ -36,12 +36,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Load user from localStorage on app start
-    const savedUser = localStorage.getItem("chatgpt_user");
+    const savedUser = localStorage.getItem("sam_user");
     if (savedUser) {
       try {
         setUser(JSON.parse(savedUser));
       } catch (error) {
-        localStorage.removeItem("chatgpt_user");
+        localStorage.removeItem("sam_user");
       }
     }
     setIsLoading(false);
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try {
       // Get users from localStorage
-      const users = JSON.parse(localStorage.getItem("chatgpt_users") || "[]");
+      const users = JSON.parse(localStorage.getItem("sam_users") || "[]");
 
       // Find user by username or email
       const foundUser = users.find(
@@ -73,7 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       };
 
       setUser(userToSet);
-      localStorage.setItem("chatgpt_user", JSON.stringify(userToSet));
+      localStorage.setItem("sam_user", JSON.stringify(userToSet));
     } catch (error) {
       throw error;
     } finally {
@@ -90,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try {
       // Get existing users
-      const users = JSON.parse(localStorage.getItem("chatgpt_users") || "[]");
+      const users = JSON.parse(localStorage.getItem("sam_users") || "[]");
 
       // Check if username or email already exists
       const existingUser = users.find(
@@ -115,10 +115,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Save to users list
       users.push(newUser);
-      localStorage.setItem("chatgpt_users", JSON.stringify(users));
+      localStorage.setItem("sam_users", JSON.stringify(users));
 
       // Create user directory structure
-      const userDir = `chatgpt_user_${newUser.id}`;
+      const userDir = `sam_user_${newUser.id}`;
       localStorage.setItem(`${userDir}_chats`, JSON.stringify([]));
       localStorage.setItem(
         `${userDir}_memory`,
@@ -139,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       };
 
       setUser(userToSet);
-      localStorage.setItem("chatgpt_user", JSON.stringify(userToSet));
+      localStorage.setItem("sam_user", JSON.stringify(userToSet));
     } catch (error) {
       throw error;
     } finally {
@@ -149,7 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("chatgpt_user");
+    localStorage.removeItem("sam_user");
   };
 
   return (

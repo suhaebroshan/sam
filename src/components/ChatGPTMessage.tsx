@@ -59,7 +59,7 @@ export function ChatGPTMessage({ message, isLast }: ChatGPTMessageProps) {
               <span className="text-sm text-gray-400">
                 {currentPersonality === "sam"
                   ? "SAM is thinking..."
-                  : "ChatGPT is thinking..."}
+                  : "SAM is thinking..."}
               </span>
             </div>
           </div>

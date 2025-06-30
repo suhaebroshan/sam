@@ -47,7 +47,7 @@ export function MemoryProvider({ children }: { children: ReactNode }) {
   const loadUserMemory = () => {
     if (!user) return;
 
-    const userDir = `chatgpt_user_${user.id}`;
+    const userDir = `sam_user_${user.id}`;
     const savedMemory = localStorage.getItem(`${userDir}_memory`);
 
     if (savedMemory) {
@@ -75,7 +75,7 @@ export function MemoryProvider({ children }: { children: ReactNode }) {
   const saveMemory = (memoryToSave: UserMemory) => {
     if (!user) return;
 
-    const userDir = `chatgpt_user_${user.id}`;
+    const userDir = `sam_user_${user.id}`;
     const updatedMemory = {
       ...memoryToSave,
       last_updated: new Date().toISOString(),

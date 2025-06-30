@@ -26,7 +26,7 @@ export function ChatGPTWelcome({ onStartChat }: ChatGPTWelcomeProps) {
       case "corporate":
         return {
           title: "How can I help you today?",
-          subtitle: `Hello ${user?.displayName || "there"}, I'm here to assist you with professional and thoughtful responses.`,
+          subtitle: `Hello ${user?.displayName || "there"}, I'm SAM in corporate mode - here to assist you with professional and thoughtful responses.`,
           examples: [
             "Draft a business proposal",
             "Explain a complex concept",

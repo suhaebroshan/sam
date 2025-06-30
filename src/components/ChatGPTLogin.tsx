@@ -51,12 +51,12 @@ export function ChatGPTLogin() {
             </div>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">
-            Welcome to ChatGPT
+            Welcome to SAM.exe
           </h1>
           <p className="text-gray-400">
             {isLogin
-              ? "Sign in to continue your conversations"
-              : "Create your account to get started"}
+              ? "Sign in to continue your conversations with SAM"
+              : "Create your account to experience unfiltered AI"}
           </p>
         </div>
 
