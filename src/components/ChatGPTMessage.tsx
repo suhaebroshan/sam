@@ -17,6 +17,11 @@ interface ChatMessage {
 interface ChatGPTMessageProps {
   message: ChatMessage;
   isLast: boolean;
+  gptTheme?: {
+    primary: string;
+    secondary: string;
+    accent: string;
+  };
 }
 
 export function ChatGPTMessage({ message, isLast }: ChatGPTMessageProps) {
