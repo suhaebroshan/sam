@@ -780,7 +780,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             model: modelToUse,
             messages: apiMessages,
             temperature: 0.8,
-            max_tokens: 500,
             stream: true,
           }),
           signal: abortControllerRef.current.signal,
