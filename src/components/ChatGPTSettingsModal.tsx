@@ -53,6 +53,9 @@ export function ChatGPTSettingsModal({
     saveCustomPersonality,
     deleteCustomPersonality,
   } = useChatGPT();
+  const { settings, updateSettings, sendProactiveMessage } =
+    useProactiveMessaging();
+  const { requestPermission, checkPermission } = useNotifications();
   const [newFact, setNewFact] = useState("");
   const [editingPersonality, setEditingPersonality] = useState<any>(null);
   const [personalityForm, setPersonalityForm] = useState({
