@@ -9,11 +9,31 @@ interface ChatGPTWelcomeProps {
   gptDescription?: string;
 }
 
-export function ChatGPTWelcome({ onStartChat }: ChatGPTWelcomeProps) {
+export function ChatGPTWelcome({
+  onStartChat,
+  mode = "normal",
+  gptName,
+  gptDescription,
+}: ChatGPTWelcomeProps) {
   const { user } = useAuth();
   const { currentPersonality } = useChatGPT();
 
   const getWelcomeMessage = () => {
+    if (mode === "gpt" && gptName) {
+      return {
+        title: `Hello! I'm ${gptName}`,
+        subtitle: gptDescription
+          ? `${gptDescription} What would you like to chat about?`
+          : `I'm ${gptName}, your custom AI assistant. How can I help you today?`,
+        examples: [
+          "Tell me about yourself",
+          "What makes you unique?",
+          "Help me with something creative",
+          "Let's have an interesting conversation",
+        ],
+      };
+    }
+
     switch (currentPersonality) {
       case "sam":
         return {
