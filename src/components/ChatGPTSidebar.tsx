@@ -40,10 +40,25 @@ export function ChatGPTSidebar({ onToggleSidebar }: ChatGPTSidebarProps) {
     selectChat,
     deleteChat,
     renameChat,
+    // Custom GPTs
+    customGPTs,
+    activeGPT,
+    gptChats,
+    activeGPTChat,
+    saveCustomGPT,
+    deleteCustomGPT,
+    selectGPT,
+    createNewGPTChat,
+    selectGPTChat,
+    deleteGPTChat,
+    toggleGPTActive,
+    mode,
+    setMode,
   } = useChatGPT();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
   const [showSettings, setShowSettings] = useState(false);
+  const [showGPTManager, setShowGPTManager] = useState(false);
 
   const handleRename = (chatId: string, currentTitle: string) => {
     setEditingId(chatId);
