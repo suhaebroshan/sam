@@ -89,13 +89,13 @@ export function ChatGPTMessage({
     >
       {/* Avatar */}
       <div
-        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-          message.isUser
-            ? "bg-blue-500"
-            : currentPersonality === "sam"
-              ? "bg-red-500"
-              : "bg-green-500"
-        }`}
+        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+        style={{
+          backgroundColor: message.isUser
+            ? "#3B82F6"
+            : gptTheme?.primary ||
+              (currentPersonality === "sam" ? "#EF4444" : "#10B981"),
+        }}
       >
         {message.isUser ? (
           <User className="w-4 h-4 text-white" />
