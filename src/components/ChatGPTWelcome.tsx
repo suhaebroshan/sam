@@ -4,6 +4,9 @@ import { useAuth } from "@/contexts/ChatGPTAuthContext";
 
 interface ChatGPTWelcomeProps {
   onStartChat: (prompt: string) => void;
+  mode?: "normal" | "gpt";
+  gptName?: string;
+  gptDescription?: string;
 }
 
 export function ChatGPTWelcome({ onStartChat }: ChatGPTWelcomeProps) {
