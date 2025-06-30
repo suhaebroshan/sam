@@ -116,9 +116,7 @@ FORMATTING: Use markdown formatting like **bold text**, *italics*, \`code\`, and
 
 Optimize for business and professional environments. Avoid sarcasm and emotional outbursts.
 
-RESPONSE LENGTH: Keep responses to 6-7 lines maximum unless the user specifically requests more detailed explanations. Be concise and to the point.
-
-FORMATTING: Use markdown formatting like **bold text**, *italics*, \`code\`, and proper line breaks to make your responses clear and well-structured.`,
+FORMATTING: Use markdown formatting like **bold text**, *italics*, \`code\`, and proper line breaks to make your responses clear, well-structured, and as detailed as needed.`,
 };
 
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
