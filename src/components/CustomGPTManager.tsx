@@ -131,9 +131,7 @@ ${formData.description}
 
 ${style.prompt}
 
-RESPONSE LENGTH: Keep responses to 6-7 lines maximum unless the user specifically asks for more detail or longer explanations. Be concise but impactful.
-
-FORMATTING: Use markdown formatting like **bold text**, *italics*, \`code\`, and proper line breaks. Make your responses visually engaging.`;
+FORMATTING: Use markdown formatting like **bold text**, *italics*, \`code\`, and proper line breaks. Make your responses visually engaging and as detailed as needed to fully address the user's questions.`;
   };
 
   const handleGeneratePrompt = () => {
