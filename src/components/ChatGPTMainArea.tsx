@@ -29,6 +29,7 @@ export function ChatGPTMainArea({
   onToggleSidebar,
 }: ChatGPTMainAreaProps) {
   const { user } = useAuth();
+  const { sendNotification, requestPermission } = useNotifications();
   const {
     // Regular chat
     activeChat,
