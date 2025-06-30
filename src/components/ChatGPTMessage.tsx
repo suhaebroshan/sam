@@ -46,7 +46,12 @@ export function ChatGPTMessage({
   if (message.isTyping) {
     return (
       <div className="flex gap-4 group">
-        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shrink-0">
+        <div
+          className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+          style={{
+            backgroundColor: gptTheme?.primary || "#10B981",
+          }}
+        >
           <Bot className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1">
