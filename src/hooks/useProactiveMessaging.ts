@@ -203,8 +203,12 @@ export function useProactiveMessaging() {
       return;
     }
 
+    console.log("Setting up proactive messaging interval...");
+
     const checkInterval = setInterval(() => {
+      console.log("Checking if should send proactive message...");
       if (shouldSendMessage()) {
+        console.log("Should send message - sending now");
         // Get current personality from localStorage (fallback to sam)
         const userDir = localStorage.getItem("sam_current_user");
         const currentPersonality = userDir
@@ -212,10 +216,15 @@ export function useProactiveMessaging() {
           : "sam";
 
         sendProactiveMessage(currentPersonality);
+      } else {
+        console.log("Not time to send message yet");
       }
     }, 60000); // Check every minute
 
-    return () => clearInterval(checkInterval);
+    return () => {
+      console.log("Clearing proactive messaging interval");
+      clearInterval(checkInterval);
+    };
   }, [settings.enabled, shouldSendMessage, sendProactiveMessage]);
 
   return {
