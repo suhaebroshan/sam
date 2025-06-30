@@ -86,7 +86,14 @@ Optimize for business and professional environments. Avoid sarcasm and emotional
 };
 
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
-const OPENROUTER_MODEL = "nvidia/llama-3.1-nemotron-ultra-253b-v1:free";
+const OPENROUTER_MODEL = "nvidia/llama-3.1-nemotron-70b-instruct";
+
+// Fallback models if primary fails
+const FALLBACK_MODELS = [
+  "meta-llama/llama-3.1-8b-instruct:free",
+  "microsoft/phi-3-medium-128k-instruct:free",
+  "google/gemma-2-9b-it:free",
+];
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
@@ -302,7 +309,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setIsStreaming(true);
 
     try {
-      await generateAIResponse(updatedMessages);
+      await generateAIResponse(updatedMessages, 0);
     } catch (error) {
       console.error("Error generating response:", error);
       toast.error("Failed to generate response");
@@ -312,7 +319,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const generateAIResponse = async (messages: ChatMessage[]) => {
+  const generateAIResponse = async (
+    messages: ChatMessage[],
+    retryCount = 0,
+  ) => {
     if (!OPENROUTER_API_KEY) {
       throw new Error("OpenRouter API key not configured");
     }
@@ -333,6 +343,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         })),
     ];
 
+    // Choose model - primary or fallback
+    const modelToUse =
+      retryCount === 0
+        ? OPENROUTER_MODEL
+        : FALLBACK_MODELS[Math.min(retryCount - 1, FALLBACK_MODELS.length - 1)];
+
     try {
       const response = await fetch(
         "https://openrouter.ai/api/v1/chat/completions",
@@ -345,7 +361,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             "X-Title": "SAM.exe",
           },
           body: JSON.stringify({
-            model: OPENROUTER_MODEL,
+            model: modelToUse,
             messages: apiMessages,
             temperature: 0.8,
             max_tokens: 1000,
@@ -356,8 +372,24 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || "API request failed");
+        let errorMessage = `HTTP error: ${response.status}`;
+        try {
+          const responseText = await response.text();
+          const errorData = JSON.parse(responseText);
+          errorMessage =
+            errorData.error?.message || errorData.detail || errorMessage;
+        } catch (parseError) {
+          // If we can't parse the error, use the status
+          console.error("Could not parse error response:", parseError);
+        }
+
+        // Try fallback model if primary fails and we haven't exhausted retries
+        if (response.status === 404 && retryCount < FALLBACK_MODELS.length) {
+          console.log(`Model ${modelToUse} not found, trying fallback...`);
+          return await generateAIResponse(messages, retryCount + 1);
+        }
+
+        throw new Error(errorMessage);
       }
 
       // Handle streaming response
@@ -437,7 +469,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setIsStreaming(true);
 
     try {
-      await generateAIResponse(messages);
+      await generateAIResponse(messages, 0);
     } catch (error) {
       console.error("Error regenerating response:", error);
       toast.error("Failed to regenerate response");
@@ -463,7 +495,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setIsStreaming(true);
 
     try {
-      await generateAIResponse(messages);
+      await generateAIResponse(messages, 0);
     } catch (error) {
       console.error("Error regenerating response:", error);
       toast.error("Failed to regenerate response");
