@@ -448,6 +448,185 @@ export function ChatGPTSettingsModal({
             </div>
           </TabsContent>
 
+          {/* Proactive Messaging Tab */}
+          <TabsContent value="proactive" className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium mb-4">
+                📲 Proactive Messaging
+              </h3>
+              <p className="text-sm text-gray-400 mb-6">
+                Let the AI send you random messages and notifications. Get
+                notified when the AI wants to chat!
+              </p>
+
+              <div className="space-y-6">
+                {/* Enable/Disable */}
+                <div className="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
+                  <div>
+                    <h4 className="font-medium">Enable Proactive Messages</h4>
+                    <p className="text-sm text-gray-400">
+                      Allow AI to send you random messages and notifications
+                    </p>
+                  </div>
+                  <Switch
+                    checked={settings.enabled}
+                    onCheckedChange={(enabled) => {
+                      if (enabled && !checkPermission()) {
+                        requestPermission().then((granted) => {
+                          if (granted) {
+                            updateSettings({ enabled: true });
+                          }
+                        });
+                      } else {
+                        updateSettings({ enabled });
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* Frequency Settings */}
+                {settings.enabled && (
+                  <>
+                    <div className="p-4 bg-gray-700 rounded-lg space-y-4">
+                      <h4 className="font-medium flex items-center gap-2">
+                        <Clock className="w-4 h-4" />
+                        Message Frequency
+                      </h4>
+                      <Select
+                        value={settings.frequency}
+                        onValueChange={(frequency: any) =>
+                          updateSettings({ frequency })
+                        }
+                      >
+                        <SelectTrigger className="bg-gray-600 border-gray-500">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gray-800 border-gray-600">
+                          {Object.entries(PROACTIVE_MESSAGE_FREQUENCIES).map(
+                            ([key, config]) => (
+                              <SelectItem
+                                key={key}
+                                value={key}
+                                className="text-white hover:bg-gray-700"
+                              >
+                                {config.label}
+                              </SelectItem>
+                            ),
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Quiet Hours */}
+                    <div className="p-4 bg-gray-700 rounded-lg space-y-4">
+                      <h4 className="font-medium">Quiet Hours</h4>
+                      <p className="text-sm text-gray-400">
+                        Set times when you don't want to receive messages
+                      </p>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label>Start Time</Label>
+                          <Input
+                            type="time"
+                            value={settings.quietHours.start}
+                            onChange={(e) =>
+                              updateSettings({
+                                quietHours: {
+                                  ...settings.quietHours,
+                                  start: e.target.value,
+                                },
+                              })
+                            }
+                            className="bg-gray-600 border-gray-500"
+                          />
+                        </div>
+                        <div>
+                          <Label>End Time</Label>
+                          <Input
+                            type="time"
+                            value={settings.quietHours.end}
+                            onChange={(e) =>
+                              updateSettings({
+                                quietHours: {
+                                  ...settings.quietHours,
+                                  end: e.target.value,
+                                },
+                              })
+                            }
+                            className="bg-gray-600 border-gray-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Statistics */}
+                    <div className="p-4 bg-gray-700 rounded-lg space-y-2">
+                      <h4 className="font-medium">Statistics</h4>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-400">Total Sent:</span>
+                          <span className="ml-2 font-medium">
+                            {settings.totalSent}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-400">Last Sent:</span>
+                          <span className="ml-2 font-medium">
+                            {settings.lastSent
+                              ? new Date(settings.lastSent).toLocaleString()
+                              : "Never"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Test Message */}
+                    <div className="p-4 bg-gray-700 rounded-lg">
+                      <h4 className="font-medium mb-2">Test Notification</h4>
+                      <p className="text-sm text-gray-400 mb-3">
+                        Send a test proactive message to check if everything
+                        works
+                      </p>
+                      <Button
+                        onClick={() => {
+                          sendProactiveMessage(
+                            "sam",
+                            "This is a test message! 👋",
+                          );
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        <MessageCircle className="w-4 h-4 mr-2" />
+                        Send Test Message
+                      </Button>
+                    </div>
+                  </>
+                )}
+
+                {/* Permission Status */}
+                {!checkPermission() && (
+                  <div className="p-4 bg-yellow-900/50 border border-yellow-600 rounded-lg">
+                    <h4 className="font-medium text-yellow-400 mb-2">
+                      Notification Permission Required
+                    </h4>
+                    <p className="text-sm text-yellow-200 mb-3">
+                      To receive proactive messages, please allow notifications
+                      in your browser.
+                    </p>
+                    <Button
+                      onClick={requestPermission}
+                      variant="outline"
+                      className="border-yellow-600 text-yellow-400 hover:bg-yellow-900/30"
+                    >
+                      <Bell className="w-4 h-4 mr-2" />
+                      Enable Notifications
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </TabsContent>
+
           {/* General Tab */}
           <TabsContent value="general" className="space-y-4">
             <div>
