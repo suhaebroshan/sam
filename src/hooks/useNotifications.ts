@@ -43,22 +43,43 @@ export function useNotifications() {
 
   const sendNotification = useCallback(
     async (options: NotificationOptions): Promise<boolean> => {
+      console.log("sendNotification called with:", options);
+      console.log("Browser support:", supported);
+      console.log("Current permission:", permission);
+
       if (!supported) {
         console.warn("Browser doesn't support notifications");
+        alert("Your browser doesn't support notifications");
+        return false;
+      }
+
+      // Check if we're in a secure context (HTTPS or localhost)
+      if (!window.isSecureContext) {
+        console.warn("Notifications require a secure context (HTTPS)");
+        alert("Notifications require HTTPS");
         return false;
       }
 
       if (permission !== "granted") {
-        console.log("Requesting notification permission...");
+        console.log("Permission not granted, requesting...");
         const granted = await requestPermission();
+        console.log("Permission request result:", granted);
         if (!granted) {
           console.warn("Notification permission denied");
+          alert("Please allow notifications in your browser settings");
           return false;
         }
       }
 
       try {
-        console.log("Sending notification:", options.title, options.body);
+        console.log("Creating notification with:", {
+          title: options.title,
+          body: options.body,
+          icon: options.icon || "/favicon.ico",
+          tag: options.tag || "sam-notification",
+          requireInteraction: options.requireInteraction || false,
+        });
+
         const notification = new Notification(options.title, {
           body: options.body,
           icon: options.icon || "/favicon.ico",
@@ -67,23 +88,40 @@ export function useNotifications() {
           silent: false,
         });
 
-        // Auto-close after 5 seconds unless requireInteraction is true
-        if (!options.requireInteraction) {
-          setTimeout(() => {
-            notification.close();
-          }, 5000);
-        }
+        console.log("Notification object created:", notification);
 
-        // Handle click event
+        // Handle events
+        notification.onshow = () => {
+          console.log("Notification shown");
+        };
+
+        notification.onerror = (error) => {
+          console.error("Notification error:", error);
+        };
+
         notification.onclick = () => {
+          console.log("Notification clicked");
           window.focus();
           notification.close();
         };
 
+        notification.onclose = () => {
+          console.log("Notification closed");
+        };
+
+        // Auto-close after 5 seconds unless requireInteraction is true
+        if (!options.requireInteraction) {
+          setTimeout(() => {
+            console.log("Auto-closing notification");
+            notification.close();
+          }, 5000);
+        }
+
         console.log("Notification sent successfully");
         return true;
       } catch (error) {
-        console.error("Error sending notification:", error);
+        console.error("Error creating notification:", error);
+        alert(`Failed to create notification: ${error.message}`);
         return false;
       }
     },
