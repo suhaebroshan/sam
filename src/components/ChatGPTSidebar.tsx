@@ -218,25 +218,26 @@ export function ChatGPTSidebar({ onToggleSidebar }: ChatGPTSidebarProps) {
           </div>
 
           {/* Custom GPTs Section */}
-          {customGPTs.length > 0 && (
-            <div className="border-t border-gray-700 pt-4">
-              <div className="flex items-center justify-between mb-3 px-2">
-                <div className="flex items-center gap-2">
-                  <Brain className="w-4 h-4 text-gray-400" />
-                  <span className="text-xs text-gray-400 font-medium">
-                    🧠 My Custom GPTs
-                  </span>
-                </div>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setShowGPTManager(true)}
-                  className="h-6 w-6 text-gray-400 hover:text-white"
-                >
-                  <Plus className="w-3 h-3" />
-                </Button>
+          <div className="border-t border-gray-700 pt-4">
+            <div className="flex items-center justify-between mb-3 px-2">
+              <div className="flex items-center gap-2">
+                <Brain className="w-4 h-4 text-gray-400" />
+                <span className="text-xs text-gray-400 font-medium">
+                  🧠 My Custom GPTs
+                </span>
               </div>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setShowGPTManager(true)}
+                className="h-6 w-6 text-gray-400 hover:text-white"
+                title="Create new Custom GPT"
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
 
+            {customGPTs.length > 0 ? (
               <div className="space-y-1">
                 {customGPTs.map((gpt) => {
                   const gptChatCount = (gptChats[gpt.id] || []).length;
@@ -257,8 +258,23 @@ export function ChatGPTSidebar({ onToggleSidebar }: ChatGPTSidebarProps) {
                   );
                 })}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="space-y-3">
+                <p className="text-xs text-gray-500 px-2">
+                  Create custom AI personalities with unique styles and
+                  behaviors
+                </p>
+                <Button
+                  onClick={() => setShowGPTManager(true)}
+                  className="w-full justify-start gap-3 bg-transparent hover:bg-gray-800 border border-gray-600 text-white h-10"
+                  variant="outline"
+                >
+                  <Brain className="w-4 h-4" />
+                  Create Custom GPT
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </ScrollArea>
 
