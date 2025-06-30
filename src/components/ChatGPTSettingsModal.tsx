@@ -13,9 +13,30 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Plus, Edit3, Brain, User, Bot } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Trash2,
+  Plus,
+  Edit3,
+  Brain,
+  User,
+  Bot,
+  Bell,
+  MessageCircle,
+  Clock,
+} from "lucide-react";
 import { useMemory } from "@/contexts/ChatGPTMemoryContext";
 import { useChatGPT } from "@/contexts/ChatGPTContext";
+import { useProactiveMessaging } from "../hooks/useProactiveMessaging";
+import { useNotifications } from "../hooks/useNotifications";
+import { PROACTIVE_MESSAGE_FREQUENCIES } from "../types/customGPT";
 
 interface ChatGPTSettingsModalProps {
   open: boolean;
