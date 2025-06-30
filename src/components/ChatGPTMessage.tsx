@@ -24,7 +24,11 @@ interface ChatGPTMessageProps {
   };
 }
 
-export function ChatGPTMessage({ message, isLast }: ChatGPTMessageProps) {
+export function ChatGPTMessage({
+  message,
+  isLast,
+  gptTheme,
+}: ChatGPTMessageProps) {
   const { user } = useAuth();
   const { regenerateResponse, currentPersonality } = useChatGPT();
   const [copied, setCopied] = useState(false);
