@@ -22,21 +22,55 @@ export function useNotifications() {
   }, []);
 
   const requestPermission = useCallback(async (): Promise<boolean> => {
+    console.log("requestPermission called");
+    console.log("Browser support:", supported);
+    console.log("Current permission:", permission);
+
     if (!supported) {
       console.warn("Browser doesn't support notifications");
+      alert("Your browser doesn't support notifications");
       return false;
     }
 
     if (permission === "granted") {
+      console.log("Permission already granted");
       return true;
     }
 
     try {
-      const result = await Notification.requestPermission();
+      console.log("Requesting notification permission...");
+      let result: NotificationPermission;
+
+      // Handle both callback and promise-based APIs
+      if (typeof Notification.requestPermission === "function") {
+        const permissionResult = Notification.requestPermission();
+        if (permissionResult instanceof Promise) {
+          result = await permissionResult;
+        } else {
+          // Older callback-based API
+          result = await new Promise((resolve) => {
+            Notification.requestPermission(resolve);
+          });
+        }
+      } else {
+        console.error("Notification.requestPermission is not available");
+        return false;
+      }
+
+      console.log("Permission result:", result);
       setPermission(result);
-      return result === "granted";
+
+      if (result === "granted") {
+        console.log("Permission granted successfully");
+        return true;
+      } else {
+        console.warn("Permission denied:", result);
+        alert("Please allow notifications to use this feature");
+        return false;
+      }
     } catch (error) {
       console.error("Error requesting notification permission:", error);
+      alert(`Failed to request notification permission: ${error.message}`);
       return false;
     }
   }, [supported, permission]);
