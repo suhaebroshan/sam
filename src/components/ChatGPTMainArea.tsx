@@ -180,31 +180,53 @@ export function ChatGPTMainArea({
           </div>
         </div>
 
-        {hasMessages && (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={regenerateLastResponse}
-              disabled={isStreaming}
-              className="text-gray-400 hover:text-white"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Regenerate
-            </Button>
-            {isStreaming && (
+        <div className="flex items-center gap-2">
+          {/* Notification test button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={async () => {
+              console.log("Testing notification...");
+              await requestPermission();
+              const success = await sendNotification({
+                title: "Test Notification",
+                body: "This is a test notification from SAM.exe!",
+                requireInteraction: true,
+              });
+              console.log("Notification test result:", success);
+            }}
+            className="text-gray-400 hover:text-white"
+            title="Test Notifications"
+          >
+            <Bell className="w-4 h-4" />
+          </Button>
+
+          {hasMessages && (
+            <>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={stopGeneration}
-                className="text-red-400 hover:text-red-300"
+                onClick={regenerateLastResponse}
+                disabled={isStreaming}
+                className="text-gray-400 hover:text-white"
               >
-                <Square className="w-4 h-4 mr-2" />
-                Stop
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Regenerate
               </Button>
-            )}
-          </div>
-        )}
+              {isStreaming && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={stopGeneration}
+                  className="text-red-400 hover:text-red-300"
+                >
+                  <Square className="w-4 h-4 mr-2" />
+                  Stop
+                </Button>
+              )}
+            </>
+          )}
+        </div>
       </div>
 
       {/* Messages Area */}
