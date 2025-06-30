@@ -8,6 +8,8 @@ import {
   User,
   Settings,
   LogOut,
+  Brain,
+  Bot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +24,8 @@ import {
 import { useChatGPT } from "@/contexts/ChatGPTContext";
 import { useAuth } from "@/contexts/ChatGPTAuthContext";
 import { ChatGPTSettingsModal } from "./ChatGPTSettingsModal";
+import { CustomGPTManager } from "./CustomGPTManager";
+import { CustomGPTCard } from "./CustomGPTCard";
 
 interface ChatGPTSidebarProps {
   onToggleSidebar: () => void;
