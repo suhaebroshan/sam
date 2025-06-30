@@ -272,6 +272,35 @@ export function ChatGPTSidebar({ onToggleSidebar }: ChatGPTSidebarProps) {
                   <Brain className="w-4 h-4" />
                   Create Custom GPT
                 </Button>
+                {/* Quick test GPT for debugging */}
+                <Button
+                  onClick={() => {
+                    console.log("Creating test GPT...");
+                    const testGPT = {
+                      id: `test_gpt_${Date.now()}`,
+                      name: "Test Helper",
+                      description: "A friendly test assistant",
+                      systemPrompt:
+                        "You are a friendly test assistant. Be helpful and kind.",
+                      speakingStyle: "friendly" as const,
+                      colorTheme: {
+                        primary: "#3B82F6",
+                        secondary: "#1E40AF",
+                        accent: "#60A5FA",
+                      },
+                      createdAt: new Date().toISOString(),
+                      updatedAt: new Date().toISOString(),
+                      messageCount: 0,
+                      isActive: true,
+                    };
+                    saveCustomGPT(testGPT);
+                  }}
+                  className="w-full justify-start gap-3 bg-green-600 hover:bg-green-700 text-white h-8 text-xs"
+                  variant="default"
+                >
+                  <Bot className="w-3 h-3" />
+                  Quick Test GPT
+                </Button>
               </div>
             )}
           </div>
