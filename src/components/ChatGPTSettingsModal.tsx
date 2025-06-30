@@ -581,24 +581,40 @@ export function ChatGPTSettingsModal({
                     </div>
 
                     {/* Test Message */}
-                    <div className="p-4 bg-gray-700 rounded-lg">
+                    <div className="p-4 bg-gray-700 rounded-lg space-y-3">
                       <h4 className="font-medium mb-2">Test Notification</h4>
-                      <p className="text-sm text-gray-400 mb-3">
+                      <p className="text-sm text-gray-400">
                         Send a test proactive message to check if everything
                         works
                       </p>
-                      <Button
-                        onClick={() => {
-                          sendProactiveMessage(
-                            "sam",
-                            "This is a test message! 👋",
-                          );
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Send Test Message
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={async () => {
+                            console.log("Testing notification...");
+                            const success = await sendProactiveMessage(
+                              "sam",
+                              "This is a test message! 👋",
+                            );
+                            console.log("Test message result:", success);
+                          }}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          <MessageCircle className="w-4 h-4 mr-2" />
+                          Send Test Message
+                        </Button>
+                        <Button
+                          onClick={async () => {
+                            console.log("Testing notification permission...");
+                            const granted = await requestPermission();
+                            console.log("Permission result:", granted);
+                          }}
+                          variant="outline"
+                          className="text-white border-gray-600"
+                        >
+                          <Bell className="w-4 h-4 mr-2" />
+                          Test Permission
+                        </Button>
+                      </div>
                     </div>
                   </>
                 )}
