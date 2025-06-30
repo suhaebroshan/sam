@@ -94,7 +94,12 @@ export function CustomGPTManager({
   };
 
   const handleSave = () => {
-    if (!formData.name.trim()) return;
+    if (!formData.name.trim()) {
+      console.warn("Cannot save GPT: Name is required");
+      return;
+    }
+
+    console.log("Saving Custom GPT:", formData);
 
     const now = new Date().toISOString();
     const gpt: CustomGPT = {
@@ -112,6 +117,7 @@ export function CustomGPTManager({
       isActive: editingGPT?.isActive || false,
     };
 
+    console.log("Generated GPT object:", gpt);
     onSaveGPT(gpt);
     resetForm();
     setActiveTab("list");
