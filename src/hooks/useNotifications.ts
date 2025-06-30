@@ -49,13 +49,16 @@ export function useNotifications() {
       }
 
       if (permission !== "granted") {
+        console.log("Requesting notification permission...");
         const granted = await requestPermission();
         if (!granted) {
+          console.warn("Notification permission denied");
           return false;
         }
       }
 
       try {
+        console.log("Sending notification:", options.title, options.body);
         const notification = new Notification(options.title, {
           body: options.body,
           icon: options.icon || "/favicon.ico",
@@ -77,6 +80,7 @@ export function useNotifications() {
           notification.close();
         };
 
+        console.log("Notification sent successfully");
         return true;
       } catch (error) {
         console.error("Error sending notification:", error);
