@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { useChatGPT } from "@/contexts/ChatGPTContext";
 import { useAuth } from "@/contexts/ChatGPTAuthContext";
+import { useNotifications } from "../hooks/useNotifications";
 import { ChatGPTMessage } from "./ChatGPTMessage";
 import { ChatGPTWelcome } from "./ChatGPTWelcome";
 import { PersonalitySelector } from "./PersonalitySelector";
