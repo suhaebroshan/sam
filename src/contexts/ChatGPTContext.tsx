@@ -321,16 +321,20 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   // Custom GPT functions
   const saveCustomGPT = (gpt: CustomGPT) => {
+    console.log("saveCustomGPT called with:", gpt);
     setCustomGPTs((prev) => {
       const existing = prev.find((g) => g.id === gpt.id);
       if (existing) {
+        console.log("Updating existing GPT");
         return prev.map((g) => (g.id === gpt.id ? gpt : g));
       }
+      console.log("Creating new GPT");
       return [...prev, gpt];
     });
 
     // Initialize empty chat array for new GPT
     if (!gptChats[gpt.id]) {
+      console.log("Initializing chat array for new GPT");
       setGptChats((prev) => ({ ...prev, [gpt.id]: [] }));
     }
   };
